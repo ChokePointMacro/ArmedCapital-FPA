@@ -14,7 +14,7 @@ export const inquirySchema = z.object({
   inquiry_type: z.enum(INQUIRY_TYPES),
   revenue_range: z.enum(REVENUE_RANGES).optional().or(z.literal("")),
   sku_count: z.enum(SKU_COUNTS).optional().or(z.literal("")),
-  platforms: z.array(z.enum(PLATFORM_OPTIONS)).optional().default([]),
+  platforms: z.array(z.enum(PLATFORM_OPTIONS)).optional(),
   message: z.string().trim().max(4000).optional().or(z.literal("")),
   source_page: z.string().max(40).optional().or(z.literal("")),
   // Honeypot — must stay empty. Bots fill it; humans never see it.
