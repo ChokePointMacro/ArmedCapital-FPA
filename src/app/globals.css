@@ -1,26 +1,173 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  Armed Capital — "coder vibe" theme.
+  Color tokens from the build brief (Section 03 / Design).
+*/
+@theme {
+  --color-bg: #0a0e16; /* near-black, slight blue */
+  --color-surface: #111827; /* cards, panels */
+  --color-border-hair: #1f2a3a; /* hairlines, dividers */
+  --color-accent: #1bd17a; /* terminal green — CTAs, highlights, prompts */
+  --color-cyan: #38bdf8; /* links, secondary accents */
+  --color-violet: #a78bfa; /* badges/data, sparingly */
+  --color-fg: #e6edf3; /* body text */
+  --color-muted: #8b97a8; /* secondary text */
+
+  --font-mono: var(--font-geist-mono), "JetBrains Mono", ui-monospace,
+    SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-geist-sans), "Inter", ui-sans-serif, system-ui,
+    sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  border-color: var(--color-border-hair);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  color: var(--color-fg);
+}
+
+/* ---- Animated dot-matrix / grid background ---- */
+.grid-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-color: var(--color-bg);
+  background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-border-hair) 60%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-border-hair) 60%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 56px 56px;
+  mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    #000 40%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    #000 40%,
+    transparent 100%
+  );
+  animation: grid-drift 24s linear infinite;
+}
+
+.grid-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+      600px circle at 15% 10%,
+      color-mix(in srgb, var(--color-accent) 10%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px circle at 85% 0%,
+      color-mix(in srgb, var(--color-cyan) 8%, transparent),
+      transparent 55%
+    );
+}
+
+@keyframes grid-drift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 56px 56px, 56px 56px;
+  }
+}
+
+/* ---- Terminal cursor ---- */
+.caret {
+  display: inline-block;
+  width: 0.6ch;
+  height: 1.1em;
+  margin-left: 1px;
+  translate: 0 0.18em;
+  background: var(--color-accent);
+  animation: blink 1.1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ---- Glass cards / glowing borders ---- */
+.glass {
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border-hair);
+}
+
+.glow-hover {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.glow-hover:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 25%, transparent),
+    0 0 28px -6px color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+/* Themed scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-hair);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(
+    in srgb,
+    var(--color-accent) 50%,
+    var(--color-border-hair)
+  );
+}
+
+/* ---- Reduced motion: motion is an accent, not a requirement ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .grid-backdrop {
+    animation: none;
+  }
+  .caret {
+    animation: none;
+    opacity: 0.85;
+  }
 }
