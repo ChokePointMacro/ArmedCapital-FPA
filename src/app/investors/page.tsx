@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Investors",
   description:
     "The Armed Capital thesis: a large, underserved market of sub-$500M physical-product companies that need FP&A rigor but can't justify a full in-house team. Recurring maintenance revenue layered on project-based engagements.",
+  alternates: { canonical: "/investors" },
 };
 
 const THESIS = [

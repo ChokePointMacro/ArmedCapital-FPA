@@ -13,6 +13,8 @@ import {
   PLATFORM_OPTIONS,
 } from "@/lib/content";
 import { Button } from "@/components/Button";
+import { BookingButton } from "@/components/Booking";
+import { track } from "@/lib/analytics";
 
 type Variant = "full" | "compact";
 
@@ -68,6 +70,11 @@ export function InquiryForm({
     try {
       const res = await submitInquiry({ ...values, source_page: sourcePage });
       if (res.ok) {
+        track("inquiry_submitted", {
+          inquiry_type: values.inquiry_type,
+          source_page: sourcePage,
+          revenue_range: values.revenue_range || null,
+        });
         setStatus("ok");
         reset();
       } else {
@@ -93,13 +100,19 @@ export function InquiryForm({
         <p className="max-w-sm text-sm text-muted">
           Thanks — your details are in. We&apos;ll review and reach out shortly.
         </p>
-        <Button
-          variant="secondary"
-          type="button"
-          onClick={() => setStatus("idle")}
-        >
-          Submit another
-        </Button>
+        <p className="font-mono text-xs text-muted">
+          Want to move faster? Book a discovery call now.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <BookingButton label="Book a discovery call" variant="primary" />
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => setStatus("idle")}
+          >
+            Submit another
+          </Button>
+        </div>
       </div>
     );
   }

@@ -2,6 +2,7 @@
 
 import { supabase } from "@/lib/supabase";
 import { inquirySchema, type InquiryResult } from "@/lib/schema";
+import { notifyInquiry } from "@/lib/notify";
 
 /**
  * submitInquiry — validates an inbound inquiry and inserts it into Supabase.
@@ -30,6 +31,9 @@ export async function submitInquiry(
     return { ok: true };
   }
 
+  // Plain insert (return=minimal). We intentionally do NOT .select() the row:
+  // the table is write-only (INSERT-only RLS, no SELECT policy for anon), so
+  // requesting the inserted row back would fail.
   const { error } = await supabase.from("inquiries").insert({
     inquiry_type: data.inquiry_type,
     name: data.name,
@@ -47,6 +51,14 @@ export async function submitInquiry(
       ok: false,
       error: "Something went wrong submitting your inquiry. Please try again.",
     };
+  }
+
+  // f01/f02 — fan out alerts (Slack, email, HubSpot via Zapier). Opt-in via env
+  // vars and fully fail-soft; never blocks the user's confirmation on error.
+  try {
+    await notifyInquiry(data);
+  } catch {
+    // ignore — notification failures must not affect the submission result
   }
 
   return { ok: true };

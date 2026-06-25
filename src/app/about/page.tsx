@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "Armed Capital gives physical-product companies the financial-planning firepower of a full in-house FP&A team — without the headcount. Data-first, KPI-driven, transparent.",
+  alternates: { canonical: "/about" },
 };
 
 const PILLARS = [

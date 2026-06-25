@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Mail, CalendarClock } from "lucide-react";
+import { Mail } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
 import { InquiryForm } from "@/components/InquiryForm";
+import { BookingEmbed } from "@/components/Booking";
 import { Reveal } from "@/components/Reveal";
 import { SITE } from "@/lib/content";
 
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   title: "Contact",
   description:
     "Start an inquiry with Armed Capital — client, investor, or general. Tell us your platforms, SKU count, and the question you're trying to answer.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
@@ -49,19 +51,7 @@ export default function ContactPage() {
             </Reveal>
 
             <Reveal delay={0.1}>
-              <div className="glass rounded-xl p-6">
-                <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted">
-                  <CalendarClock className="h-4 w-4 text-cyan" aria-hidden />
-                  Book a call
-                </div>
-                <p className="mt-3 text-sm text-muted">
-                  Optional Calendly / booking link goes here once the client
-                  provides it.
-                </p>
-                <div className="mt-4 rounded-lg border-2 border-dashed border-border-hair px-4 py-6 text-center font-mono text-xs text-muted">
-                  TODO — embed booking widget
-                </div>
-              </div>
+              <BookingEmbed />
             </Reveal>
 
             <Reveal delay={0.15}>

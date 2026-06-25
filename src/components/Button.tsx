@@ -28,10 +28,16 @@ export function ButtonLink({
   className = "",
   ...rest
 }: ButtonLinkProps) {
-  const external = href.startsWith("http") || href.startsWith("mailto:");
+  const isHttp = href.startsWith("http");
+  const external = isHttp || href.startsWith("mailto:");
   if (external) {
     return (
-      <a href={href} className={`${base} ${variants[variant]} ${className}`}>
+      <a
+        href={href}
+        className={`${base} ${variants[variant]} ${className}`}
+        {...(isHttp ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        {...(rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
+      >
         {children}
       </a>
     );

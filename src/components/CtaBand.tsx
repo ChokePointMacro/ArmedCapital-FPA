@@ -1,4 +1,5 @@
 import { ButtonLink } from "@/components/Button";
+import { BookingButton } from "@/components/Booking";
 import { Reveal } from "@/components/Reveal";
 
 type CtaBandProps = {
@@ -47,6 +48,7 @@ export function CtaBand({
               <ButtonLink href={secondaryHref} variant="secondary">
                 {secondaryLabel}
               </ButtonLink>
+              <BookingButton variant="ghost" />
             </div>
           </div>
         </div>

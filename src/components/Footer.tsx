@@ -67,14 +67,22 @@ export function Footer() {
       </div>
 
       <div className="border-t border-border-hair">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 py-5 font-mono text-xs text-muted sm:flex-row">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-5 font-mono text-xs text-muted sm:flex-row">
           <span>
             © {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </span>
-          <span className="text-muted">
-            <span className="text-accent">{"// "}</span>built with precision{" "}
-            <span className="caret" aria-hidden />
-          </span>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="transition-colors hover:text-accent">
+              Privacy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-accent">
+              Terms
+            </Link>
+            <span className="text-muted">
+              <span className="text-accent">{"// "}</span>built with precision{" "}
+              <span className="caret" aria-hidden />
+            </span>
+          </div>
         </div>
       </div>
     </footer>

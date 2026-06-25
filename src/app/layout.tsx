@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { Analytics } from "@/components/Analytics";
+import { CookieConsent } from "@/components/CookieConsent";
+import { JsonLd } from "@/components/JsonLd";
 import { SITE } from "@/lib/content";
 
 const geistSans = Geist({
@@ -71,6 +75,7 @@ export default function RootLayout({
               "document.documentElement.classList.add('js');setTimeout(function(){document.documentElement.classList.add('reveal-all')},2600);",
           }}
         />
+        <JsonLd />
         <div className="grid-backdrop" aria-hidden />
         <div className="grid-glow" aria-hidden />
         <div className="flex min-h-screen flex-col">
@@ -78,6 +83,10 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
+        <CookieConsent />
       </body>
     </html>
   );

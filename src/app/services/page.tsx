@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Services",
   description:
     "The Armed Capital four-stage service model: data structuring, a 12-month rolling forecast, monthly maintenance, and ad-hoc modeling — for physical-product companies under 2,000 SKUs.",
+  alternates: { canonical: "/services" },
 };
 
 export default function ServicesPage() {
