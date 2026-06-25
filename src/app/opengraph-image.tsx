@@ -33,11 +33,20 @@ export default function OgImage() {
           <div style={{ fontSize: 26, color: "#1bd17a", marginBottom: 18 }}>
             $ armed-capital --forecast --rolling 12mo
           </div>
-          <div style={{ fontSize: 62, fontWeight: 700, lineHeight: 1.1 }}>
-            FP&A &amp; demand forecasting
-            <br />
-            for companies that{" "}
-            <span style={{ color: "#1bd17a" }}>make real things</span>.
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              fontSize: 60,
+              fontWeight: 700,
+              lineHeight: 1.15,
+            }}
+          >
+            <div style={{ display: "flex" }}>FP&A &amp; demand forecasting</div>
+            <div style={{ display: "flex" }}>
+              <span>for companies that&nbsp;</span>
+              <span style={{ color: "#1bd17a" }}>make real things.</span>
+            </div>
           </div>
         </div>
 
