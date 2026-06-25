@@ -1,44 +1,64 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 type RevealProps = {
   children: ReactNode;
   delay?: number;
-  y?: number;
   className?: string;
   as?: "div" | "section" | "li" | "span";
 };
 
 /**
- * Scroll-reveal wrapper: fades/slides content up as it enters the viewport.
- * Honors prefers-reduced-motion by rendering statically.
+ * Scroll-reveal wrapper.
+ *
+ * Robustness contract: content is VISIBLE by default. The hidden start state is
+ * applied only via the `.js` class (added by an inline script in the root
+ * layout before paint), and a global timeout force-reveals everything if the
+ * bundle ever fails to hydrate — so the page can never render blank. The
+ * entrance animation itself is pure CSS (see globals.css), triggered by adding
+ * `.reveal-in` once the element scrolls into view.
  */
 export function Reveal({
   children,
   delay = 0,
-  y = 18,
-  className,
+  className = "",
   as = "div",
 }: RevealProps) {
-  const reduce = useReducedMotion();
-  const MotionTag = motion[as];
+  const ref = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
 
-  if (reduce) {
-    const Tag = as;
-    return <Tag className={className}>{children}</Tag>;
-  }
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const Tag = as as keyof React.JSX.IntrinsicElements;
 
   return (
-    <MotionTag
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.55, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
+    <Tag
+      // @ts-expect-error ref type varies across the tag union
+      ref={ref}
+      className={`reveal ${inView ? "reveal-in" : ""} ${className}`.trim()}
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 }

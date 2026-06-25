@@ -153,7 +153,35 @@ body {
   );
 }
 
+/* ---- Scroll reveal (robust: visible by default) ----
+   Content is fully visible unless JS is present (`.js` set before paint by the
+   root-layout inline script). The inline script also adds `.reveal-all` after a
+   timeout, force-revealing everything if the bundle ever fails to hydrate, so
+   the page can never render blank. */
+.reveal {
+  /* visible by default — no-JS / pre-hydration / bundle-failure safe */
+}
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s cubic-bezier(0.21, 0.47, 0.32, 0.98),
+    transform 0.6s cubic-bezier(0.21, 0.47, 0.32, 0.98);
+  will-change: opacity, transform;
+}
+.js .reveal.reveal-in,
+.js.reveal-all .reveal {
+  opacity: 1;
+  transform: none;
+}
+
 /* ---- Reduced motion: motion is an accent, not a requirement ---- */
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

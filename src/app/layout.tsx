@@ -62,6 +62,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen antialiased">
+        {/* Parser-blocking inline script — runs before body paint. Enables the
+            scroll-reveal hidden state, and force-reveals everything after a
+            timeout so a hydration failure can never leave the page blank. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "document.documentElement.classList.add('js');setTimeout(function(){document.documentElement.classList.add('reveal-all')},2600);",
+          }}
+        />
         <div className="grid-backdrop" aria-hidden />
         <div className="grid-glow" aria-hidden />
         <div className="flex min-h-screen flex-col">
