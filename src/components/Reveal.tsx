@@ -49,11 +49,10 @@ export function Reveal({
     return () => io.disconnect();
   }, []);
 
-  const Tag = as as keyof React.JSX.IntrinsicElements;
+  const Tag = as as React.ElementType;
 
   return (
     <Tag
-      // @ts-expect-error ref type varies across the tag union
       ref={ref}
       className={`reveal ${inView ? "reveal-in" : ""} ${className}`.trim()}
       style={delay ? { transitionDelay: `${delay}s` } : undefined}
