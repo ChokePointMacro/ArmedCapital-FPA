@@ -13,11 +13,27 @@
   --color-violet: #a78bfa; /* badges/data, sparingly */
   --color-fg: #e6edf3; /* body text */
   --color-muted: #8b97a8; /* secondary text */
+  --color-on-accent: #06130c; /* readable text on the accent fill */
 
   --font-mono: var(--font-geist-mono), "JetBrains Mono", ui-monospace,
     SFMono-Regular, Menlo, monospace;
   --font-sans: var(--font-geist-sans), "Inter", ui-sans-serif, system-ui,
     sans-serif;
+}
+
+/* f24 — light theme. Default is dark; the toggle sets data-theme="light"
+   on <html> (persisted, applied before paint). Utilities read these vars, so
+   overriding them here flips the whole site. */
+[data-theme="light"] {
+  --color-bg: #eef2f8;
+  --color-surface: #ffffff;
+  --color-border-hair: #d3dceb;
+  --color-accent: #0a8f54;
+  --color-cyan: #0a73b8;
+  --color-violet: #6438d6;
+  --color-fg: #111a26;
+  --color-muted: #586676;
+  --color-on-accent: #ffffff;
 }
 
 * {

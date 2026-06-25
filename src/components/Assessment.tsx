@@ -178,7 +178,7 @@ export function Assessment() {
                 <button
                   type="submit"
                   disabled={saved === "saving"}
-                  className="inline-flex shrink-0 items-center gap-2 rounded-md bg-accent px-4 py-2.5 font-mono text-sm font-medium text-bg transition-all hover:brightness-110 disabled:opacity-50"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-md bg-accent px-4 py-2.5 font-mono text-sm font-medium text-on-accent transition-all hover:brightness-110 disabled:opacity-50"
                 >
                   {saved === "saving" ? (
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden />

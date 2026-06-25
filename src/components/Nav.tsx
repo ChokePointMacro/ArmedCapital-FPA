@@ -3,9 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 import { ButtonLink } from "@/components/Button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { SITE } from "@/lib/content";
+
+function openPalette() {
+  window.dispatchEvent(new Event("ac:open-palette"));
+}
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -70,20 +75,40 @@ export function Nav() {
               );
             })}
           </ul>
+          <button
+            onClick={openPalette}
+            aria-label="Open command palette"
+            title="Search (⌘K)"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border-hair px-2.5 text-muted transition-colors hover:border-accent/55 hover:text-accent"
+          >
+            <Search className="h-4 w-4" aria-hidden />
+            <kbd className="font-mono text-[10px]">⌘K</kbd>
+          </button>
+          <ThemeToggle />
           <ButtonLink href="/contact" variant="primary">
             Start an Inquiry
           </ButtonLink>
         </div>
 
-        {/* mobile toggle */}
-        <button
-          className="text-fg md:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-        >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* mobile controls */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={openPalette}
+            aria-label="Open command palette"
+            className="text-muted hover:text-accent"
+          >
+            <Search className="h-5 w-5" />
+          </button>
+          <ThemeToggle />
+          <button
+            className="text-fg"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </nav>
 
       {/* mobile menu */}

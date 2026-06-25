@@ -6,6 +6,7 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@/components/Analytics";
 import { CookieConsent } from "@/components/CookieConsent";
+import { CommandPalette } from "@/components/CommandPalette";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE } from "@/lib/content";
 
@@ -66,23 +67,33 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen antialiased">
-        {/* Parser-blocking inline script — runs before body paint. Enables the
-            scroll-reveal hidden state, and force-reveals everything after a
-            timeout so a hydration failure can never leave the page blank. */}
+        {/* Parser-blocking inline script — runs before body paint. Applies the
+            saved theme (no flash), enables the scroll-reveal hidden state, and
+            force-reveals everything after a timeout so a hydration failure can
+            never leave the page blank. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "document.documentElement.classList.add('js');setTimeout(function(){document.documentElement.classList.add('reveal-all')},2600);",
+              "(function(){try{if(localStorage.getItem('ac-theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}document.documentElement.classList.add('js');setTimeout(function(){document.documentElement.classList.add('reveal-all')},2600);})();",
           }}
         />
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:font-mono focus:text-sm focus:text-on-accent"
+        >
+          Skip to content
+        </a>
         <JsonLd />
         <div className="grid-backdrop" aria-hidden />
         <div className="grid-glow" aria-hidden />
         <div className="flex min-h-screen flex-col">
           <Nav />
-          <main className="flex-1">{children}</main>
+          <main id="main" className="flex-1">
+            {children}
+          </main>
           <Footer />
         </div>
+        <CommandPalette />
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
