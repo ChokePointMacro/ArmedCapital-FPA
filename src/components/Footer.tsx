@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { SITE } from "@/lib/content";
 
 const LINKS = [
   { href: "/services", label: "Services" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/demo", label: "Live Demo" },
+  { href: "/case-studies", label: "Case Studies" },
+  { href: "/insights", label: "Insights" },
   { href: "/about", label: "About" },
   { href: "/investors", label: "Investors" },
   { href: "/contact", label: "Contact" },
@@ -12,7 +17,7 @@ const LINKS = [
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-border-hair bg-bg/60">
-      <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:grid-cols-2 md:grid-cols-4">
         <div className="flex flex-col gap-3">
           <Link
             href="/"
@@ -63,6 +68,13 @@ export function Footer() {
           >
             Start an Inquiry →
           </Link>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted">
+            Stay updated
+          </span>
+          <NewsletterSignup source="footer" />
         </div>
       </div>
 
