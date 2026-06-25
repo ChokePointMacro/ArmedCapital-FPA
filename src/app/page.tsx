@@ -131,6 +131,57 @@ export default function Home() {
         </Reveal>
       </section>
 
+      {/* ---------- INTERACTIVE TOOLS ---------- */}
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <SectionHeading
+          kicker="// try it yourself"
+          title="See the value before you talk to us"
+          subtitle="Two quick, no-login tools — get a number and a next step in under two minutes."
+        />
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          <Reveal>
+            <Link
+              href="/calculator"
+              className="glass glow-hover flex h-full flex-col gap-3 rounded-xl p-6"
+            >
+              <span className="font-mono text-xs uppercase tracking-wider text-accent">
+                calculator
+              </span>
+              <h3 className="font-mono text-lg font-semibold text-fg">
+                Inventory savings calculator
+              </h3>
+              <p className="text-sm text-muted">
+                Estimate the working capital you&apos;d free up by hitting a
+                tighter days-on-hand.
+              </p>
+              <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-sm text-accent">
+                Run the numbers <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <Link
+              href="/assessment"
+              className="glass glow-hover flex h-full flex-col gap-3 rounded-xl p-6"
+            >
+              <span className="font-mono text-xs uppercase tracking-wider text-cyan">
+                assessment
+              </span>
+              <h3 className="font-mono text-lg font-semibold text-fg">
+                Forecast-readiness check
+              </h3>
+              <p className="text-sm text-muted">
+                Five questions to score how ready your data is — and the right
+                first step.
+              </p>
+              <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-sm text-cyan">
+                Take the assessment <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ---------- WHO WE SERVE ---------- */}
       <section className="mx-auto max-w-6xl px-5 py-16">
         <SectionHeading

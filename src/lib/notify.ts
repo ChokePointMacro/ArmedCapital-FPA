@@ -95,3 +95,25 @@ async function notifyZapier(i: NotifyPayload): Promise<void> {
 export async function notifyInquiry(i: NotifyPayload): Promise<void> {
   await Promise.allSettled([notifySlack(i), notifyEmail(i), notifyZapier(i)]);
 }
+
+/**
+ * Lead notifications for Phase 2 tools (calculator, assessment, newsletter).
+ * Posts to a dedicated Zapier hook and/or Slack when configured; fail-soft.
+ */
+export async function notifyLead(
+  kind: "calculator" | "assessment" | "subscriber",
+  payload: Record<string, unknown>,
+): Promise<void> {
+  const zapier = process.env.ZAPIER_LEAD_HOOK_URL;
+  const slack = process.env.SLACK_WEBHOOK_URL;
+  const tasks: Promise<void>[] = [];
+  if (zapier) tasks.push(postJson(zapier, { kind, ...payload }));
+  if (slack) {
+    const summary = Object.entries(payload)
+      .filter(([, v]) => v !== null && v !== undefined && v !== "")
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(" · ");
+    tasks.push(postJson(slack, { text: `*New ${kind} lead* — ${summary}` }));
+  }
+  await Promise.allSettled(tasks);
+}
