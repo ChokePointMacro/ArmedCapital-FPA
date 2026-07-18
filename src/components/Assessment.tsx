@@ -5,7 +5,11 @@ import { ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
 import {
   QUESTIONS,
   MAX_SCORE,
+  GRADED_IDS,
+  gradeFrom,
   recommend,
+  type Fit,
+  type AssessmentOption,
   type Recommendation,
 } from "@/lib/assessment";
 import { submitAssessment } from "@/app/actions/leads";
@@ -17,32 +21,56 @@ export function Assessment() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [labels, setLabels] = useState<Record<string, string>>({});
+  const [fits, setFits] = useState<Record<string, Fit>>({});
   const [email, setEmail] = useState("");
   const [hp, setHp] = useState("");
   const [saved, setSaved] = useState<"idle" | "saving" | "ok">("idle");
+  const [pending, setPending] = useState<AssessmentOption | null>(null);
+  const [detail, setDetail] = useState("");
 
   const total = QUESTIONS.length;
   const done = step >= total;
   const score = Object.values(answers).reduce((a, b) => a + b, 0);
+  const gradeOf = (f: Record<string, Fit>) =>
+    gradeFrom(GRADED_IDS.map((id) => f[id]).filter(Boolean) as Fit[]);
   const pct = Math.round((score / MAX_SCORE) * 100);
   const rec: Recommendation = recommend(pct);
 
-  function choose(points: number, label: string) {
+  /** Options carrying `capture` pause for a short free-text answer first. */
+  function pick(o: AssessmentOption) {
+    if (o.capture) {
+      setPending(o);
+      setDetail("");
+      return;
+    }
+    commit(o);
+  }
+
+  function commit(o: AssessmentOption, detailText?: string) {
+    const points = o.points ?? 0;
+    const fit = o.fit;
+    const extra = detailText?.trim().slice(0, 80);
+    const label = extra ? `${o.label}: ${extra}` : o.label;
+    setPending(null);
+    setDetail("");
     const q = QUESTIONS[step];
     setAnswers((p) => ({ ...p, [q.id]: points }));
     setLabels((p) => ({ ...p, [q.id]: label }));
+    const nextFits = fit ? { ...fits, [q.id]: fit } : fits;
+    if (fit) setFits(nextFits);
     const next = step + 1;
     setStep(next);
     if (next >= total) {
       const finalScore = Math.round(
         ((score + points) / MAX_SCORE) * 100,
       );
-      track("assessment_completed", { score: finalScore });
+      const grade = gradeOf(nextFits);
+      track("assessment_completed", { score: finalScore, grade });
       // Persist anonymously up front; email (if given) is added on the result.
       void submitAssessment({
         email: "",
         score: finalScore,
-        answers: { ...labels, [q.id]: label },
+        answers: { ...labels, [q.id]: label, _grade: grade },
         recommended_next_step: recommend(finalScore).headline,
         website_hp: "",
       });
@@ -55,7 +83,7 @@ export function Assessment() {
     const res = await submitAssessment({
       email,
       score: pct,
-      answers: labels,
+      answers: { ...labels, _grade: gradeOf(fits) },
       recommended_next_step: rec.headline,
       website_hp: hp,
     });
@@ -79,25 +107,71 @@ export function Assessment() {
         </div>
 
         <h3 className="font-mono text-lg font-semibold text-fg">{q.prompt}</h3>
+        {q.help && (
+          <p className="mt-1.5 font-mono text-xs text-muted">{q.help}</p>
+        )}
 
-        <div className="mt-5 flex flex-col gap-2.5">
-          {q.options.map((o) => (
-            <button
-              key={o.label}
-              onClick={() => choose(o.points, o.label)}
-              className="group flex items-center justify-between rounded-lg border border-border-hair bg-bg/40 px-4 py-3.5 text-left text-sm text-fg/90 transition-all hover:border-accent/55 hover:bg-accent/5"
+        {pending ? (
+          <div className="mt-5 flex flex-col gap-3">
+            <label
+              htmlFor="assessment-detail"
+              className="font-mono text-sm text-fg"
             >
-              <span>{o.label}</span>
-              <span className="font-mono text-xs text-muted group-hover:text-accent">
-                →
-              </span>
-            </button>
-          ))}
-        </div>
+              {pending.capture}
+            </label>
+            <input
+              id="assessment-detail"
+              autoFocus
+              value={detail}
+              maxLength={80}
+              onChange={(e) => setDetail(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commit(pending, detail);
+                }
+              }}
+              placeholder="e.g. Cin7, Katana, Odoo, SAP Business One, Fishbowl…"
+              className="rounded-lg border border-border-hair bg-bg/40 px-4 py-3.5 text-sm text-fg outline-none transition-colors placeholder:text-muted/60 focus:border-accent/55"
+            />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => commit(pending, detail)}
+                className="rounded-md bg-accent px-4 py-2 font-mono text-sm text-on-accent transition-all hover:brightness-110"
+              >
+                Continue
+              </button>
+              <button
+                onClick={() => commit(pending)}
+                className="rounded-md px-3 py-2 font-mono text-sm text-muted transition-colors hover:text-fg"
+              >
+                Skip
+              </button>
+            </div>
+            <p className="font-mono text-[11px] text-muted">
+              Optional — it just helps us see which systems to support next.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-5 flex flex-col gap-2.5">
+            {q.options.map((o) => (
+              <button
+                key={o.label}
+                onClick={() => pick(o)}
+                className="group flex items-center justify-between rounded-lg border border-border-hair bg-bg/40 px-4 py-3.5 text-left text-sm text-fg/90 transition-all hover:border-accent/55 hover:bg-accent/5"
+              >
+                <span>{o.label}</span>
+                <span className="font-mono text-xs text-muted group-hover:text-accent">
+                  →
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {step > 0 && (
           <button
-            onClick={() => setStep((s) => s - 1)}
+            onClick={() => { setPending(null); setStep((s) => s - 1); }}
             className="mt-5 inline-flex items-center gap-1.5 font-mono text-xs text-muted hover:text-fg"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> back

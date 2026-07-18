@@ -103,17 +103,47 @@ export async function notifyInquiry(i: NotifyPayload): Promise<void> {
 export async function notifyLead(
   kind: "calculator" | "assessment" | "subscriber",
   payload: Record<string, unknown>,
-): Promise<void> {
+): Promise<number> {
   const zapier = process.env.ZAPIER_LEAD_HOOK_URL;
   const slack = process.env.SLACK_WEBHOOK_URL;
+  const email = process.env.RESEND_API_KEY && process.env.ALERT_EMAIL_TO;
+  const summary = Object.entries(payload)
+    .filter(([, v]) => v !== null && v !== undefined && v !== "")
+    .map(([k, v]) => `${k}: ${v}`)
+    .join(" · ");
+
   const tasks: Promise<void>[] = [];
   if (zapier) tasks.push(postJson(zapier, { kind, ...payload }));
-  if (slack) {
-    const summary = Object.entries(payload)
-      .filter(([, v]) => v !== null && v !== undefined && v !== "")
-      .map(([k, v]) => `${k}: ${v}`)
-      .join(" · ");
-    tasks.push(postJson(slack, { text: `*New ${kind} lead* — ${summary}` }));
+  if (slack) tasks.push(postJson(slack, { text: `*New ${kind} lead* — ${summary}` }));
+  if (email) tasks.push(emailAlert(`New ${kind} lead`, summary));
+
+  const results = await Promise.allSettled(tasks);
+  return results.filter((r) => r.status === "fulfilled").length;
+}
+
+/**
+ * Plain-text alert via Resend. Used as the last-resort channel when the
+ * database is unavailable, so a lead is never silently dropped.
+ */
+export async function emailAlert(subject: string, body: string): Promise<void> {
+  const key = process.env.RESEND_API_KEY;
+  const to = process.env.ALERT_EMAIL_TO;
+  if (!key || !to) return;
+  const from =
+    process.env.ALERT_EMAIL_FROM || "Armed Capital <onboarding@resend.dev>";
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${key}`,
+      },
+      body: JSON.stringify({ from, to: [to], subject, text: body }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(t);
   }
-  await Promise.allSettled(tasks);
 }

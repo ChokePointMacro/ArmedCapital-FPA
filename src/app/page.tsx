@@ -171,7 +171,7 @@ export default function Home() {
                 Forecast-readiness check
               </h3>
               <p className="text-sm text-muted">
-                Five questions to score how ready your data is — and the right
+                Ten quick questions to score how ready your data is — and the right
                 first step.
               </p>
               <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-sm text-cyan">

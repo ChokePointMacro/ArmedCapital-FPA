@@ -196,6 +196,12 @@ export function Nav() {
             <kbd className="font-mono text-[10px]">⌘K</kbd>
           </button>
           <ThemeToggle />
+          <Link
+            href="/signin"
+            className="font-mono text-sm text-muted transition-colors hover:text-accent"
+          >
+            Sign in
+          </Link>
           <ButtonLink href="/contact" variant="primary">
             Start an Inquiry
           </ButtonLink>
@@ -269,6 +275,14 @@ export function Nav() {
                 </li>
               );
             })}
+            <li>
+              <Link
+                href="/signin"
+                className="block rounded-md px-3 py-2.5 font-mono text-sm text-muted hover:text-fg"
+              >
+                Sign in
+              </Link>
+            </li>
             <li className="mt-3">
               <ButtonLink href="/contact" variant="primary" className="w-full">
                 Start an Inquiry

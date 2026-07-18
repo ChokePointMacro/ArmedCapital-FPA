@@ -215,9 +215,31 @@ export const CCC = DIO + DSO - DPO;
 export const AR = (ANNUAL_REVENUE / 365) * DSO;
 export const AP = (ANNUAL_COGS / 365) * DPO;
 export const WORKING_CAPITAL = TOT_ONHAND_VAL + AR - AP;
-/** Cash released by pulling DIO down to a 60-day target. */
+/**
+ * Aggregate DIO hides the truth: fast movers pull the average down while
+ * slow movers quietly trap cash. So excess is computed PER SKU against the
+ * target, then summed — the number a CFO can actually act on.
+ */
 export const DIO_TARGET = 60;
-export const CASH_RELEASE = Math.max(0, ((DIO - DIO_TARGET) / 365) * ANNUAL_COGS);
+export const SKU_INVENTORY = SKUS.map((s) => {
+  const annualCogs = s.wkly * 52 * s.cost;
+  const inv = s.onhand * s.cost;
+  const target = (annualCogs / 365) * DIO_TARGET;
+  return {
+    id: s.id,
+    name: s.name,
+    inv,
+    target,
+    excess: Math.max(0, inv - target),
+    dio: Math.round((inv / annualCogs) * 365),
+  };
+}).sort((a, b) => b.excess - a.excess);
+
+/** Cash tied up above a 60-day cover target, summed across SKUs. */
+export const CASH_RELEASE = SKU_INVENTORY.reduce((a, x) => a + x.excess, 0);
+export const SLOW_MOVERS = SKU_INVENTORY.filter((x) => x.dio > 90);
+export const SLOW_MOVER_VAL = SLOW_MOVERS.reduce((a, x) => a + x.inv, 0);
+export const SLOW_MOVER_SHARE = (SLOW_MOVER_VAL / TOT_ONHAND_VAL) * 100;
 
 /* ---------------- coverage horizon ---------------- */
 export const HORIZON_WEEKS = 26;

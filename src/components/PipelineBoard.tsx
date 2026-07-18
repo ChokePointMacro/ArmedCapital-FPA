@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
+import { track } from "@/lib/analytics";
 import { Mail, Phone } from "lucide-react";
 import {
   STAGES, SKUS, SKU, PRS, POS, VENDOR, leadTotal,
@@ -154,7 +155,7 @@ export function PipelineBoard() {
         {TABS.map((t, i) => (
           <button
             key={t.id}
-            onClick={() => setTab(t.id)}
+            onClick={() => { setTab(t.id); track("sample_tab_viewed", { page: "pipeline", tab: t.label }); }}
             className={`rounded-md px-3.5 py-2 font-mono text-[13px] transition-colors ${tab === t.id ? "bg-accent text-on-accent" : "text-muted hover:text-fg"}`}
           >
             <span className="mr-1.5 opacity-60">0{i + 1}</span>

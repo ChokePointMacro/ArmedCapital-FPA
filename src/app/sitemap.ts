@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/investors",
     "/trust",
     "/contact",
+    "/request-access",
     "/privacy",
     "/terms",
   ];

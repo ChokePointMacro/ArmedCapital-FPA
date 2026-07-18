@@ -6,7 +6,7 @@ import { Reveal } from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "Forecast-Readiness Assessment",
   description:
-    "Answer five quick questions to see how forecast-ready your data is — and the right first step for your business.",
+    "Answer ten quick questions to see how forecast-ready your data is — and the right first step for your business.",
   alternates: { canonical: "/assessment" },
 };
 
@@ -17,7 +17,7 @@ export default function AssessmentPage() {
         align="center"
         kicker="// f08 · readiness check"
         title="Is your data forecast-ready?"
-        subtitle="Five questions, about a minute. You'll get a readiness score and the right next step — whether that's building a forecast now or starting with a Stage 1 data pass."
+        subtitle="Ten quick questions, about a minute. You'll get a readiness score and the right next step — whether that's building a forecast now or starting with a Stage 1 data pass."
         className="mb-10"
       />
       <Reveal>

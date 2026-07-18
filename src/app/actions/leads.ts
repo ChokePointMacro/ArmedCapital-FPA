@@ -23,7 +23,18 @@ export async function submitCalculatorLead(raw: unknown): Promise<LeadResult> {
     inputs: d.inputs,
     estimated_savings: d.estimatedSavings,
   });
-  if (error) return { ok: false, error: "Couldn't save — please try again." };
+  if (error) {
+    // DB unavailable (paused project, outage). Fall back to the independent
+    // channels so the lead still reaches a human. See /api/cron/keepalive.
+    const delivered = await notifyLead("calculator", {
+      degraded: "DB_UNAVAILABLE",
+      db_error: error.message,
+      email: d.email,
+    });
+    return delivered > 0
+      ? { ok: true }
+      : { ok: false, error: "Couldn't save — please try again." };
+  }
 
   try {
     await notifyLead("calculator", {
@@ -46,16 +57,38 @@ export async function submitAssessment(raw: unknown): Promise<LeadResult> {
   const d = parsed.data;
   if (d.website_hp) return { ok: true };
 
+  const gradeVal =
+    typeof d.answers._grade === "string" &&
+    ["A", "B", "C"].includes(d.answers._grade)
+      ? d.answers._grade
+      : null;
+
   const { error } = await supabase.from("assessments").insert({
     email: d.email || null,
     score: d.score,
     answers: d.answers,
     recommended_next_step: d.recommended_next_step,
+    grade: gradeVal,
   });
-  if (error) return { ok: false, error: "Couldn't save — please try again." };
+  if (error) {
+    const delivered = await notifyLead("assessment", {
+      degraded: "DB_UNAVAILABLE",
+      db_error: error.message,
+      grade: gradeVal ?? "—",
+      email: d.email || null,
+      score: d.score,
+      next_step: d.recommended_next_step,
+      answers: JSON.stringify(d.answers),
+    });
+    return delivered > 0
+      ? { ok: true }
+      : { ok: false, error: "Couldn't save — please try again." };
+  }
 
   try {
     await notifyLead("assessment", {
+      // A = core ICP. Work these first.
+      grade: gradeVal ?? "—",
       email: d.email || null,
       score: d.score,
       next_step: d.recommended_next_step,
@@ -81,7 +114,14 @@ export async function subscribe(raw: unknown): Promise<LeadResult> {
 
   // Unique-violation = already subscribed; treat as success.
   if (error && !/duplicate|unique/i.test(error.message)) {
-    return { ok: false, error: "Couldn't subscribe — please try again." };
+    const delivered = await notifyLead("subscriber", {
+      degraded: "DB_UNAVAILABLE",
+      email: d.email,
+      source: d.source || null,
+    });
+    return delivered > 0
+      ? { ok: true }
+      : { ok: false, error: "Couldn't subscribe — please try again." };
   }
 
   try {

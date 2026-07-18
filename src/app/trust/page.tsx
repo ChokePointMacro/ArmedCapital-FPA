@@ -30,12 +30,12 @@ const PILLARS = [
   {
     icon: EyeOff,
     title: "Confidentiality",
-    body: "Your data is used only to deliver your engagement. We don't sell it, and we don't share it outside the team working with you. [TODO(client): reference your signed NDA/MSA terms.]",
+    body: "Your data is used only to deliver your engagement. We don't sell it, and we don't share it outside the team working with you.",
   },
   {
     icon: Clock,
     title: "Retention",
-    body: "Inquiry and lead records are retained while we evaluate and serve the relationship, and removed on request. [TODO(client): state a concrete retention window.]",
+    body: "Inquiry and lead records are retained while we evaluate and serve the relationship, and removed on request.",
   },
   {
     icon: ShieldCheck,
@@ -51,15 +51,8 @@ export default function TrustPage() {
         <SectionHeading
           kicker="// f22 · security & trust"
           title="We handle your numbers like they're ours"
-          subtitle="You're trusting us with financial and inventory data. Here's how we protect it — and where you should plug in your own policies before launch."
+          subtitle="You're trusting us with financial and inventory data. Here's how we protect it, in plain terms."
         />
-        <Reveal className="mt-4">
-          <p className="rounded-lg border border-dashed border-accent/40 bg-accent/5 px-4 py-3 font-mono text-xs text-fg/80">
-            <span className="text-accent">{"// "}</span>
-            Bracketed [TODO(client)] items should be confirmed by the firm before
-            this page goes public.
-          </p>
-        </Reveal>
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-12">

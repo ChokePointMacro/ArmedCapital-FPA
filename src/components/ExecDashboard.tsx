@@ -9,6 +9,7 @@ import {
   WKLY_COGS, ANNUAL_REVENUE, ANNUAL_COGS, ANNUAL_GROSS_PROFIT, GROSS_MARGIN_PCT,
   ANNUAL_OPEX, ANNUAL_EBITDA, EBITDA_MARGIN_PCT,
   DIO, DSO, DPO, CCC, WORKING_CAPITAL, CASH_RELEASE, DIO_TARGET,
+  SLOW_MOVERS, SLOW_MOVER_SHARE,
   AVG_LEAD, ON_TIME_PCT, CHASE_COUNT, TOT_ONHAND_UNITS,
   fmt, usdM, pct,
 } from "@/lib/sampleData";
@@ -272,7 +273,7 @@ export function ExecDashboard() {
         <Kpi label="EBITDA" value={usdM(ANNUAL_EBITDA)} sub={pct(EBITDA_MARGIN_PCT) + " margin"} tone={ANNUAL_EBITDA > 0 ? "good" : "bad"} />
         <Kpi label="Working Capital" value={usdM(WORKING_CAPITAL)} sub="inventory + AR − AP" />
         <Kpi label="Cash Conversion" value={`${CCC}d`} sub={`DIO ${DIO} + DSO ${DSO} − DPO ${DPO}`} tone={CCC > 90 ? "bad" : "warn"} />
-        <Kpi label="Cash Release @ 60d DIO" value={usdM(CASH_RELEASE)} sub={`from DIO ${DIO}d → ${DIO_TARGET}d`} tone="good" />
+        <Kpi label="Cash Trapped in Slow Movers" value={usdM(CASH_RELEASE)} sub={`${SLOW_MOVERS.length} SKUs above ${DIO_TARGET}d cover`} tone="warn" />
       </div>
 
       {/* SANKEY */}
@@ -296,8 +297,11 @@ export function ExecDashboard() {
         <Card label="cash_conversion_cycle()" right={<span>days</span>}>
           <CccBar />
           <p className="mt-3 font-mono text-[10.5px] leading-relaxed text-muted">
-            Inventory sits <span className="text-fg">{DIO} days</span> before it sells. Pulling that to {DIO_TARGET} days frees{" "}
-            <span className="text-accent">{usdM(CASH_RELEASE)}</span> of cash without touching revenue.
+            Blended DIO of <span className="text-fg">{DIO} days</span> looks healthy — but the average hides the problem.{" "}
+            <span className="text-[#f5a623]">{SLOW_MOVERS.map((s) => s.id).join(", ")}</span> sit at{" "}
+            {SLOW_MOVERS.map((s) => s.dio + "d").join(" / ")}, holding{" "}
+            <span className="text-fg">{pct(SLOW_MOVER_SHARE)}</span> of inventory value. Trimming every SKU to a {DIO_TARGET}-day
+            target frees <span className="text-accent">{usdM(CASH_RELEASE)}</span> without touching revenue.
           </p>
         </Card>
       </div>

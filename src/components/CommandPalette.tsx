@@ -33,6 +33,8 @@ const NAV: { label: string; href: string; hint?: string }[] = [
   { label: "About", href: "/about" },
   { label: "Investors", href: "/investors" },
   { label: "Contact", href: "/contact" },
+  { label: "Client sign in", href: "/signin", hint: "portal" },
+  { label: "Request portal access", href: "/request-access", hint: "portal" },
   { label: "Security & Trust", href: "/trust" },
 ];
 
