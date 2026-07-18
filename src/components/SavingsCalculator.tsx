@@ -6,13 +6,15 @@ import {
   computeSavings,
   usd,
   CALC_DEFAULTS,
+  VERTICAL_BENCHMARKS,
   type CalcInputs,
+  type VerticalKey,
 } from "@/lib/calc";
 import { submitCalculatorLead } from "@/app/actions/leads";
 import { track } from "@/lib/analytics";
 
 type Field = {
-  key: keyof CalcInputs;
+  key: Exclude<keyof CalcInputs, "vertical">;
   label: string;
   min: number;
   max: number;
@@ -23,8 +25,8 @@ type Field = {
 const FIELDS: Field[] = [
   { key: "annualRevenue", label: "Annual revenue", min: 1_000_000, max: 500_000_000, step: 1_000_000, fmt: usd },
   { key: "skuCount", label: "SKU count", min: 50, max: 2000, step: 25, fmt: (n) => n.toLocaleString("en-US") },
-  { key: "currentDaysOnHand", label: "Current avg days-on-hand", min: 15, max: 180, step: 1, fmt: (n) => `${n} days` },
-  { key: "targetDaysOnHand", label: "Target days-on-hand", min: 15, max: 180, step: 1, fmt: (n) => `${n} days` },
+  { key: "currentDaysOnHand", label: "Current avg days-on-hand", min: 15, max: 250, step: 1, fmt: (n) => `${n} days` },
+  { key: "targetDaysOnHand", label: "Target days-on-hand", min: 15, max: 250, step: 1, fmt: (n) => `${n} days` },
   { key: "carryingCostPct", label: "Annual carrying cost", min: 8, max: 35, step: 1, fmt: (n) => `${n}%` },
 ];
 
@@ -37,7 +39,7 @@ export function SavingsCalculator() {
 
   const result = useMemo(() => computeSavings(inputs), [inputs]);
 
-  const set = (key: keyof CalcInputs, value: number) =>
+  const set = (key: keyof CalcInputs, value: number | VerticalKey) =>
     setInputs((p) => ({ ...p, [key]: value }));
 
   async function sendBreakdown(e: React.FormEvent) {
@@ -75,6 +77,31 @@ export function SavingsCalculator() {
           <span className="text-accent">$</span> model --your-inventory
         </div>
         <div className="flex flex-col gap-5">
+          <div>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label
+                htmlFor="calc-vertical"
+                className="font-mono text-xs uppercase tracking-wider text-muted"
+              >
+                Your vertical
+              </label>
+              <span className="font-mono text-[11px] text-muted">
+                n={result.verticalN} public comps
+              </span>
+            </div>
+            <select
+              id="calc-vertical"
+              value={inputs.vertical}
+              onChange={(e) => set("vertical", e.target.value as VerticalKey)}
+              className="w-full rounded-md border border-border-hair bg-bg/60 px-3 py-2.5 font-mono text-sm text-fg focus:border-accent/60 focus:outline-none"
+            >
+              {(Object.keys(VERTICAL_BENCHMARKS) as VerticalKey[]).map((k) => (
+                <option key={k} value={k}>
+                  {VERTICAL_BENCHMARKS[k].label}
+                </option>
+              ))}
+            </select>
+          </div>
           {FIELDS.map((f) => (
             <div key={f.key}>
               <div className="mb-1.5 flex items-center justify-between">
@@ -102,8 +129,9 @@ export function SavingsCalculator() {
           ))}
         </div>
         <p className="mt-5 font-mono text-[11px] leading-relaxed text-muted">
-          {"// "}estimate only — assumes COGS ≈ 65% of revenue. Your real model
-          uses your actuals.
+          {"// "}estimate only — assumes COGS ≈ 65% of revenue. Peer benchmarks
+          from SEC EDGAR (FY2025, 26 public brands). Your real model uses your
+          actuals.
         </p>
       </div>
 
@@ -121,6 +149,61 @@ export function SavingsCalculator() {
             {usd(result.workingCapitalRelease)}
           </div>
         </div>
+
+        {/* Peer benchmark vs public comps */}
+        {(() => {
+          const tone =
+            result.benchmarkStatus === "overstocked"
+              ? { text: "text-accent", border: "border-accent/30", label: "OVERSTOCKED vs peers" }
+              : result.benchmarkStatus === "elevated"
+                ? { text: "text-violet", border: "border-violet/30", label: "ELEVATED vs peers" }
+                : { text: "text-cyan", border: "border-cyan/30", label: "LEAN for your vertical" };
+          return (
+            <div className={`mt-4 rounded-lg border ${tone.border} bg-bg/40 p-4`}>
+              <div className="flex items-center justify-between">
+                <div className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                  You vs {result.verticalLabel}
+                </div>
+                <span className={`font-mono text-[10px] font-semibold uppercase tracking-wider ${tone.text}`}>
+                  {tone.label}
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <div className={`font-mono text-2xl font-bold ${tone.text}`}>
+                    {inputs.currentDaysOnHand}
+                  </div>
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">You</div>
+                </div>
+                <div>
+                  <div className="font-mono text-2xl font-bold text-fg/70">
+                    {result.verticalMedian}
+                  </div>
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Median</div>
+                </div>
+                <div>
+                  <div className="font-mono text-2xl font-bold text-fg/70">
+                    {result.verticalP75}
+                  </div>
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">p75</div>
+                </div>
+              </div>
+              {result.trappedVsPeers > 0 && (
+                <div className="mt-3 border-t border-border-hair pt-3">
+                  <div className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                    Cash carried above peer p75
+                  </div>
+                  <div className={`font-mono text-xl font-semibold ${tone.text}`}>
+                    {usd(result.trappedVsPeers)}
+                  </div>
+                </div>
+              )}
+              <p className="mt-3 font-mono text-[11px] leading-relaxed text-fg/70">
+                {result.benchmarkNote}
+              </p>
+            </div>
+          );
+        })()}
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div className="rounded-lg border border-border-hair bg-bg/40 p-4">

@@ -9,7 +9,11 @@ export const SITE = {
   email: "hello@armedcapital.co",
   description:
     "FP&A and demand forecasting for physical-product companies. We turn messy data into a rolling 12-month forecast with order recommendations, ABC classifications, and days-on-hand KPIs.",
-  url: "https://armed-capital.vercel.app",
+  // Canonical origin. MUST be a domain that actually serves this site —
+  // canonical tags, sitemap.xml, robots.txt and OG image URLs all derive
+  // from it. When armedcapital.co is pointed at this Vercel project,
+  // change this one line to "https://armedcapital.co".
+  url: "https://armed-capital-fpa.vercel.app",
 } as const;
 
 export type Stage = {

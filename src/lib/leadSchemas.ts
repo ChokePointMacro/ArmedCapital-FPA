@@ -12,6 +12,9 @@ export const calculatorLeadSchema = z.object({
     currentDaysOnHand: z.number().nonnegative(),
     targetDaysOnHand: z.number().nonnegative(),
     carryingCostPct: z.number().nonnegative(),
+    vertical: z
+      .enum(["all", "outdoor", "apparel", "furniture", "housewares", "marine", "mattress"])
+      .optional(),
   }),
   estimatedSavings: z.number().nonnegative(),
   // honeypot
