@@ -16,7 +16,7 @@ export default function DemoPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f10 · show, don't tell"
           title="A live taste of the deliverable"
           subtitle="This is sample data, not your business — but it's the shape of what a finished model looks like: a rolling forecast, ABC-classified SKUs, and a days-on-hand target you can move."

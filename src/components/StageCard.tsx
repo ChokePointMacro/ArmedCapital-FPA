@@ -9,7 +9,7 @@ export function StageCard({ stage, index }: { stage: Stage; index: number }) {
         <header className="flex items-baseline justify-between gap-3 border-b border-border-hair pb-4">
           <span className="font-mono text-sm text-accent">
             {stage.id}
-            <span className="text-muted"> //</span>
+            <span className="text-muted">{" //"}</span>
           </span>
           <span className="rounded-full border border-border-hair px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-violet">
             {stage.cadence}

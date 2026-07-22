@@ -71,7 +71,9 @@ export function TerminalHero() {
     return () => clearTimeout(timer);
   }, [reduce]);
 
-  const typingLine = !reduce && lineIdx.current < SCRIPT.length;
+  // `done` tracks the current typing index (setDone(i+1) runs in lockstep with
+  // lineIdx.current += 1), so read it — not the ref — during render.
+  const typingLine = !reduce && done < SCRIPT.length;
 
   return (
     <div className="glass glow-hover overflow-hidden rounded-xl shadow-2xl shadow-black/40">
@@ -102,10 +104,10 @@ export function TerminalHero() {
         {typingLine && (
           <pre
             className={`whitespace-pre-wrap break-words ${
-              TONE[SCRIPT[lineIdx.current]?.tone ?? "default"]
+              TONE[SCRIPT[done]?.tone ?? "default"]
             }`}
           >
-            {SCRIPT[lineIdx.current]?.prompt ? (
+            {SCRIPT[done]?.prompt ? (
               <span className="text-accent">$ </span>
             ) : null}
             {typed}

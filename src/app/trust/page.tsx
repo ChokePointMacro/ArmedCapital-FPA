@@ -48,7 +48,7 @@ export default function TrustPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f22 · security & trust"
           title="We handle your numbers like they're ours"
           subtitle="You're trusting us with financial and inventory data. Here's how we protect it, in plain terms."

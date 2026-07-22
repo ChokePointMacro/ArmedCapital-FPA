@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function AssessmentPage() {
   return (
     <section className="mx-auto max-w-2xl px-5 pb-20 pt-16 sm:pt-20">
-      <SectionHeading
+      <SectionHeading level={1}
         align="center"
         kicker="// f08 · readiness check"
         title="Is your data forecast-ready?"

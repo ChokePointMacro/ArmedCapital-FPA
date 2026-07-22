@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function SignInPage() {
   return (
     <section className="mx-auto max-w-lg px-5 pt-20 pb-24 sm:pt-24">
-      <SectionHeading
+      <SectionHeading level={1}
         kicker="// client workspace"
         title="Sign in"
         subtitle="Your live model — inventory, purchase orders and lead times, on your own data."

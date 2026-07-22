@@ -357,7 +357,7 @@ export function ExecDashboard() {
       </div>
 
       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
-        // sample data · illustrative only · every figure computed from one shared dataset
+        {"// sample data · illustrative only · every figure computed from one shared dataset"}
       </p>
     </div>
   );

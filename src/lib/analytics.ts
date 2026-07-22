@@ -7,7 +7,6 @@
 import type { PostHog } from "posthog-js";
 
 declare global {
-  // eslint-disable-next-line no-var
   var __posthog: PostHog | undefined;
 }
 

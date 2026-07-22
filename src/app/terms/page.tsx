@@ -15,7 +15,7 @@ const UPDATED = "June 2026"; // TODO(client): bump when terms are revised.
 export default function TermsPage() {
   return (
     <section className="mx-auto max-w-3xl px-5 pt-16 sm:pt-20">
-      <SectionHeading kicker="// legal" title="Terms of Service" />
+      <SectionHeading level={1} kicker="// legal" title="Terms of Service" />
       <p className="mt-4 font-mono text-xs text-muted">Last updated: {UPDATED}</p>
 
       <div className="mt-10 space-y-8 text-sm leading-relaxed text-muted">

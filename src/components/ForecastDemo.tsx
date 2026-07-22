@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 // f10 — interactive, sample-data demo: ABC Pareto + days-on-hand gauge.
 // Clearly labeled sample data; no real client information.
@@ -27,6 +27,9 @@ function classify() {
   });
 }
 
+// Static, pure computation (no props/state) — compute once at module load.
+const ROWS = classify();
+
 const CLS_COLOR: Record<string, string> = {
   A: "var(--color-accent)",
   B: "var(--color-cyan)",
@@ -35,7 +38,7 @@ const CLS_COLOR: Record<string, string> = {
 
 export function ForecastDemo() {
   const [target, setTarget] = useState(60);
-  const rows = useMemo(classify, []);
+  const rows = ROWS;
   const maxUnits = Math.max(...rows.map((r) => r.units));
 
   // Gauge: how aggressive is the chosen target vs a 90-day baseline.

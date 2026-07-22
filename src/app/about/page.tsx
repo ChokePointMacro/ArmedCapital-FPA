@@ -33,7 +33,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// about us"
           title="The FP&A team you can't yet justify hiring"
           subtitle="Armed Capital exists for the founder who knows their gut isn't a forecasting model — and who'd rather arm their capital decisions with rigor than guess."

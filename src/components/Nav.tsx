@@ -67,11 +67,14 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close everything on route change.
+  // Close everything on route change. UI reset synchronized to navigation
+  // (incl. browser back/forward) — a legitimate effect use.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setOpen(false);
     setMenu(null);
   }, [pathname]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Escape closes an open dropdown; outside click does too (touch/keyboard).
   useEffect(() => {

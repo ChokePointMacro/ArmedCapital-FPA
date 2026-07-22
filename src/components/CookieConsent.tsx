@@ -15,6 +15,9 @@ export function CookieConsent() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Reads persisted consent from the browser on mount — external state the
+    // server can't know, so deriving it here is correct.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (POSTHOG_KEY && getConsent() === null) setVisible(true);
   }, []);
 

@@ -15,7 +15,7 @@ export default function DashboardPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f27 · demand → supply → cash"
           title="The whole business on one page"
           subtitle="Where the money is, what it's tied up in, and when it comes back. Every figure here is computed from the same dataset behind the Reports and Pipeline pages — so the exec view and the operating detail always agree."

@@ -595,7 +595,7 @@ export function ReportsBoard() {
       )}
 
       <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
-        // sample data · illustrative only · not a live feed
+        {"// sample data · illustrative only · not a live feed"}
       </p>
     </div>
   );

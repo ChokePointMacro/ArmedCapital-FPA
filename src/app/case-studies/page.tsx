@@ -37,7 +37,7 @@ export default function CaseStudiesPage() {
       />
 
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f12 · proof"
           title="Outcomes, by stage"
           subtitle="Structured the way we work: the challenge, the approach across our four stages, and the result. Numbers are filled in from real, approved engagements."

@@ -15,7 +15,7 @@ const UPDATED = "June 2026"; // TODO(client): bump when policy is revised.
 export default function PrivacyPage() {
   return (
     <section className="mx-auto max-w-3xl px-5 pt-16 sm:pt-20">
-      <SectionHeading kicker="// legal" title="Privacy Policy" />
+      <SectionHeading level={1} kicker="// legal" title="Privacy Policy" />
       <p className="mt-4 font-mono text-xs text-muted">Last updated: {UPDATED}</p>
 
       <div className="prose-legal mt-10 space-y-8 text-sm leading-relaxed text-muted">

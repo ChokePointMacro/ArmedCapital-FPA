@@ -18,7 +18,7 @@ export default function InsightsPage() {
   return (
     <section className="mx-auto max-w-4xl px-5 pt-16 sm:pt-20">
       <div className="flex items-start justify-between gap-4">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f11 · insights"
           title="Field notes on forecasting & inventory"
           subtitle="Practical writing on rolling forecasts, ABC analysis, days-on-hand, lead-time buffers, and country-sourcing risk."

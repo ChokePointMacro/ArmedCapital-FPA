@@ -15,7 +15,7 @@ export default function PipelinePage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f26 · order-to-receipt visibility"
           title="Where every unit is, right now"
           subtitle="The model doesn't stop at a forecast. Each requisition it proposes is tracked through approval, PO issue, production, transit and receipt — so you can see what's covered, what's slipping, and exactly how much lead time each SKU really needs."

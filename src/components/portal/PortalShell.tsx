@@ -73,6 +73,9 @@ export function PortalShell({
   }, []);
 
   useEffect(() => {
+    // Subscribes React state to Supabase auth + initial session fetch (async,
+    // so no synchronous setState) — the rule's permitted "external system" case.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load();
     const supabase = getBrowserSupabase();
     const { data: sub } = supabase.auth.onAuthStateChange(() => void load());

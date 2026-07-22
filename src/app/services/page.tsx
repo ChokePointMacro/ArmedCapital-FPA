@@ -17,7 +17,7 @@ export default function ServicesPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="05 / services"
           title="The four-stage service model"
           subtitle="This is the core of the offering. Stages are sequential, but Stage 3 is recurring (monthly) and Stage 4 is on-demand. Pricing scales with the size of the business — no fixed numbers until we scope your data."

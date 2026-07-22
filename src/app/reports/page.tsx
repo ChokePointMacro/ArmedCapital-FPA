@@ -15,7 +15,7 @@ export default function ReportsPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f25 · the recurring deliverables"
           title="The reports you get every month"
           subtitle="Sample data, not your business — but the exact shape of what lands in your inbox: run-out by SKU with inventory schedule, forecast-to-actuals history, a forecast-driven monthly build/buy schedule, and future POs by timing and value."

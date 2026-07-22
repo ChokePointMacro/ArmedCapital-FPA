@@ -33,7 +33,7 @@ export default function InvestorsPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// investors"
           title="Recurring revenue on a repeatable process"
           subtitle="Armed Capital pairs sticky monthly maintenance contracts with higher-ticket project work — in a market most FP&A firms ignore."

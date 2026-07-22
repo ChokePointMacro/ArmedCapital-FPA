@@ -44,7 +44,6 @@ export function Analytics() {
   useEffect(() => {
     if (!globalThis.__posthog) return;
     globalThis.__posthog.capture("$pageview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, searchParams]);
 
   return null;

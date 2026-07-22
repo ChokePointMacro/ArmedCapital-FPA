@@ -15,7 +15,7 @@ export default function CalculatorPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f07 · working-capital calculator"
           title="See the cash trapped in your inventory"
           subtitle="Drag the sliders to your numbers. We estimate the one-time working-capital release and the recurring carrying-cost savings from hitting a tighter days-on-hand — the core of what a rolling forecast unlocks."

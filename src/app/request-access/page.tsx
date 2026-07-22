@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function RequestAccessPage() {
   return (
     <section className="mx-auto max-w-2xl px-5 pt-20 pb-24 sm:pt-24">
-      <SectionHeading
+      <SectionHeading level={1}
         kicker="// client workspace"
         title="Request access"
         subtitle="The client portal shows your own numbers — inventory position, PO pipeline and lead times, updated as we run your model. Access is granted per company."

@@ -68,7 +68,7 @@ export default function PricingPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// f09 · pricing"
           title="Pricing that scales with your size"
           subtitle="We don't publish fixed numbers — engagements are scoped to your revenue, SKU count, and data complexity. The structure, though, is always the same three pieces."

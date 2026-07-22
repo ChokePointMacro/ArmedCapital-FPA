@@ -17,7 +17,7 @@ export default function ContactPage() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
-        <SectionHeading
+        <SectionHeading level={1}
           kicker="// contact"
           title="Start an inquiry"
           subtitle="Client, investor, or general — pick a type, give us the essentials, and we'll be in touch. Submissions are stored securely and write-only."

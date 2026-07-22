@@ -131,8 +131,6 @@ export function CommandPalette() {
     if (open) setTimeout(() => inputRef.current?.focus(), 10);
   }, [open]);
 
-  useEffect(() => setActive(0), [query]);
-
   if (!open) return null;
 
   const activate = (item?: Item) => {
@@ -160,7 +158,10 @@ export function CommandPalette() {
           <input
             ref={inputRef}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActive(0);
+            }}
             onKeyDown={(e) => {
               if (e.key === "ArrowDown") {
                 e.preventDefault();
