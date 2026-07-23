@@ -40,13 +40,13 @@ export default function CaseStudiesPage() {
         <SectionHeading level={1}
           kicker="// f12 · proof"
           title="Outcomes, by stage"
-          subtitle="Structured the way we work: the challenge, the approach across our four stages, and the result. Numbers are filled in from real, approved engagements."
+          subtitle="Structured the way we work: the challenge, the approach across our four stages, and the quantified result. The engagements below are illustrative — real, approved studies replace them as they close."
         />
         <Reveal className="mt-4">
           <p className="rounded-lg border border-dashed border-violet/40 bg-violet/5 px-4 py-3 font-mono text-xs text-fg/80">
             <span className="text-violet">{"// "}</span>
-            Placeholder studies below — TODO(client): swap in approved names and
-            quantified results.
+            Illustrative engagements — representative scenarios and numbers,
+            anonymized. Real, approved studies replace these as they close.
           </p>
         </Reveal>
       </section>
@@ -56,7 +56,7 @@ export default function CaseStudiesPage() {
           {CASE_STUDIES.map((cs, i) => (
             <Reveal key={cs.slug} delay={i * 0.06}>
               <article className="glass glow-hover rounded-xl p-6 sm:p-8">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-hair pb-4">
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border-hair pb-4">
                   <div>
                     <h3 className="font-mono text-lg font-semibold text-fg">
                       {cs.client}
@@ -64,13 +64,20 @@ export default function CaseStudiesPage() {
                     <div className="mt-0.5 font-mono text-xs text-muted">
                       {cs.industry}
                     </div>
+                    <div className="mt-1 font-mono text-[11px] text-muted/80">
+                      {cs.context}
+                    </div>
                   </div>
                   {cs.placeholder && (
                     <span className="rounded-full border border-violet/40 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-violet">
-                      sample
+                      illustrative
                     </span>
                   )}
                 </div>
+
+                <p className="mt-4 text-sm font-medium leading-relaxed text-fg/90">
+                  {cs.summary}
+                </p>
 
                 <div className="mt-5 grid gap-6 md:grid-cols-3">
                   <div>
