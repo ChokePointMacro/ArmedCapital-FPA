@@ -44,6 +44,15 @@ export function PortalShell({
     } = await supabase.auth.getSession();
 
     if (!session?.user) {
+      // A magic-link token may still be in the URL and not yet processed by
+      // detectSessionInUrl. If so, stay in "loading" and let onAuthStateChange
+      // re-run load() once the session is established — redirecting to /signin
+      // here would drop the token and silently break login.
+      const url =
+        typeof window !== "undefined"
+          ? window.location.hash + window.location.search
+          : "";
+      if (url.includes("access_token") || url.includes("code=")) return;
       setState({ kind: "anon" });
       return;
     }
