@@ -68,6 +68,57 @@ export async function isAdmin(accessToken: string): Promise<boolean> {
   }
 }
 
+export type DriveStatus = {
+  configured: boolean;
+  connected: boolean;
+  email: string | null;
+};
+
+export async function getDriveStatus(
+  accessToken: string,
+): Promise<AdminResult<DriveStatus>> {
+  try {
+    await verifiedAdminEmail(accessToken);
+    const configured = !!(
+      process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    );
+    let connected = false;
+    let email: string | null = null;
+    const admin = getSupabaseAdmin();
+    if (admin) {
+      const { data } = await admin
+        .from("drive_connection")
+        .select("google_email")
+        .eq("is_active", true)
+        .limit(1)
+        .maybeSingle();
+      if (data) {
+        connected = true;
+        email = (data as { google_email: string }).google_email;
+      }
+    }
+    return { ok: true, data: { configured, connected, email } };
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
+}
+
+export async function disconnectDrive(accessToken: string): Promise<AdminResult> {
+  try {
+    await verifiedAdminEmail(accessToken);
+    const admin = getSupabaseAdmin();
+    if (!admin) return { ok: false, error: "Service role not configured." };
+    const { error } = await admin
+      .from("drive_connection")
+      .update({ is_active: false })
+      .eq("is_active", true);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
+}
+
 export async function listAccessRequests(
   accessToken: string,
 ): Promise<AdminResult<AccessRequestRow[]>> {

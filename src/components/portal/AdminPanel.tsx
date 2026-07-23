@@ -2,14 +2,17 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, ShieldAlert, Check, X, UserPlus } from "lucide-react";
+import { Loader2, ShieldAlert, Check, X, UserPlus, HardDrive } from "lucide-react";
 import { getBrowserSupabase } from "@/lib/supabaseBrowser";
 import {
   listAccessRequests,
   approveAccessRequest,
   denyAccessRequest,
   createWorkspace,
+  getDriveStatus,
+  disconnectDrive,
   type AccessRequestRow,
+  type DriveStatus,
 } from "@/app/actions/admin";
 
 type Phase =
@@ -23,6 +26,7 @@ export function AdminPanel() {
   const [rows, setRows] = useState<AccessRequestRow[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState<string>("");
+  const [drive, setDrive] = useState<DriveStatus | null>(null);
 
   const refresh = useCallback(async (token: string) => {
     const res = await listAccessRequests(token);
@@ -48,6 +52,19 @@ export function AdminPanel() {
       }
       setRows(res.data ?? []);
       setPhase({ kind: "ready", token });
+
+      const ds = await getDriveStatus(token);
+      if (ds.ok) setDrive(ds.data ?? null);
+
+      // Feedback from the Google OAuth round-trip (?drive=…).
+      const p = new URLSearchParams(window.location.search).get("drive");
+      const messages: Record<string, string> = {
+        connected: "Google Drive connected.",
+        error: "Drive connection failed. Try again.",
+        notconfigured: "Google OAuth isn't configured yet (missing app credentials).",
+        norefresh: "Google didn't return a refresh token — remove the app's access in your Google account, then reconnect.",
+      };
+      if (p && messages[p]) setNotice(messages[p]);
     })();
   }, []);
 
@@ -94,6 +111,17 @@ export function AdminPanel() {
     }
   }
 
+  async function onDisconnectDrive(token: string) {
+    setBusy("drive");
+    const res = await disconnectDrive(token);
+    setBusy(null);
+    if (!res.ok) setNotice(res.error);
+    else {
+      setDrive((d) => (d ? { ...d, connected: false, email: null } : d));
+      setNotice("Google Drive disconnected.");
+    }
+  }
+
   if (phase.kind === "loading") {
     return (
       <div className="flex items-center gap-3 py-24 font-mono text-sm text-muted">
@@ -131,6 +159,73 @@ export function AdminPanel() {
 
   return (
     <div className="space-y-10">
+      <section>
+        <h2 className="font-mono text-lg font-semibold text-fg">
+          Source data — Google Drive
+        </h2>
+        <p className="mt-2 text-sm text-muted">
+          Connect Armed Capital&apos;s central Google Drive. Client source files
+          and finalized models are read from here to publish into dashboards.
+        </p>
+        <div className="glass mt-4 flex flex-col gap-4 rounded-xl p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <HardDrive className="h-5 w-5 text-accent" aria-hidden />
+            <div>
+              {!drive ? (
+                <span className="font-mono text-sm text-muted">Checking…</span>
+              ) : !drive.configured ? (
+                <>
+                  <div className="font-mono text-sm text-[#f5a623]">
+                    Not configured
+                  </div>
+                  <div className="mt-0.5 font-mono text-[11px] text-muted">
+                    Add the Google OAuth app credentials to enable connecting.
+                  </div>
+                </>
+              ) : drive.connected ? (
+                <>
+                  <div className="font-mono text-sm text-accent">Connected</div>
+                  <div className="mt-0.5 font-mono text-[11px] text-muted">
+                    {drive.email}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="font-mono text-sm text-fg">Not connected</div>
+                  <div className="mt-0.5 font-mono text-[11px] text-muted">
+                    Ready to connect.
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {drive?.configured && drive.connected ? (
+              <button
+                onClick={() => onDisconnectDrive(token)}
+                disabled={busy === "drive"}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border-hair px-3.5 py-2 font-mono text-[13px] text-muted hover:text-fg disabled:opacity-60"
+              >
+                {busy === "drive" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                Disconnect
+              </button>
+            ) : (
+              <a
+                href="/api/drive/connect"
+                aria-disabled={!drive?.configured}
+                className={`inline-flex items-center gap-1.5 rounded-md px-4 py-2 font-mono text-[13px] ${
+                  drive?.configured
+                    ? "bg-accent text-on-accent hover:brightness-110"
+                    : "pointer-events-none border border-border-hair text-muted/50"
+                }`}
+              >
+                <HardDrive className="h-3.5 w-3.5" /> Connect Google Drive
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
       <section>
         <h2 className="font-mono text-lg font-semibold text-fg">
           Access requests

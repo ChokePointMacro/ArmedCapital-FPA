@@ -7,6 +7,7 @@ import { Menu, X, Search, ChevronDown } from "lucide-react";
 import { ButtonLink } from "@/components/Button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SITE } from "@/lib/content";
+import { getBrowserSupabase } from "@/lib/supabaseBrowser";
 
 function openPalette() {
   window.dispatchEvent(new Event("ac:open-palette"));
@@ -58,7 +59,18 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [authed, setAuthed] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+
+  // Reflect signed-in state so the nav shows the workspace, not "Sign in".
+  useEffect(() => {
+    const supabase = getBrowserSupabase();
+    supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      setAuthed(!!session),
+    );
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -200,10 +212,10 @@ export function Nav() {
           </button>
           <ThemeToggle />
           <Link
-            href="/signin"
+            href={authed ? "/app" : "/signin"}
             className="font-mono text-sm text-muted transition-colors hover:text-accent"
           >
-            Sign in
+            {authed ? "Workspace" : "Sign in"}
           </Link>
           <ButtonLink href="/contact" variant="primary">
             Start an Inquiry
@@ -280,10 +292,10 @@ export function Nav() {
             })}
             <li>
               <Link
-                href="/signin"
+                href={authed ? "/app" : "/signin"}
                 className="block rounded-md px-3 py-2.5 font-mono text-sm text-muted hover:text-fg"
               >
-                Sign in
+                {authed ? "Workspace" : "Sign in"}
               </Link>
             </li>
             <li className="mt-3">
