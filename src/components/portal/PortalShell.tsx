@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Loader2, ShieldAlert } from "lucide-react";
 import { getBrowserSupabase } from "@/lib/supabaseBrowser";
+import { isAdmin } from "@/app/actions/admin";
 
 export type Org = { id: string; name: string; slug: string };
 
@@ -32,6 +33,7 @@ export function PortalShell({
   children: (ctx: { org: Org; email: string }) => React.ReactNode;
 }) {
   const [state, setState] = useState<State>({ kind: "loading" });
+  const [isAdminUser, setIsAdminUser] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -46,6 +48,7 @@ export function PortalShell({
       return;
     }
     const email = session.user.email ?? "";
+    setIsAdminUser(await isAdmin(session.access_token));
 
     // Which org(s) does this user belong to? RLS restricts this to their own.
     const { data: memberships } = await supabase
@@ -128,10 +131,22 @@ export function PortalShell({
               Sign out
             </button>
           </div>
+          {isAdminUser && (
+            <Link
+              href="/app/admin"
+              className="mt-4 inline-block font-mono text-[12px] text-accent hover:underline"
+            >
+              Go to admin →
+            </Link>
+          )}
         </div>
       </div>
     );
   }
+
+  const tabs = isAdminUser
+    ? [...TABS, { href: "/app/admin", label: "Admin" }]
+    : TABS;
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-10">
@@ -156,7 +171,7 @@ export function PortalShell({
       </div>
 
       <nav className="mb-8 flex flex-wrap gap-1 rounded-lg border border-border-hair bg-surface/40 p-1">
-        {TABS.map((t) => {
+        {tabs.map((t) => {
           const active = pathname === t.href;
           return (
             <Link
